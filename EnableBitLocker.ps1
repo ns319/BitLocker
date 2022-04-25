@@ -22,13 +22,6 @@ if ((Test-Connection -ComputerName $HostName -Count 1 -Quiet) -eq $true) {
                 Write-Host "Something went wrong and BitLocker was not enabled!" -ForegroundColor Red
             } else {
                 Write-Host "BitLocker is now enabled for $HostName." -ForegroundColor Green
-                $KeyID = ((Get-BitLockerVolume -MountPoint C:).KeyProtector | Where-Object {$_.KeyProtectorType -eq "RecoveryPassword"}).KeyProtectorID
-                Backup-BitLockerKeyProtector -MountPoint C: -KeyProtectorId $KeyID
-                if ($? -ne $true) {
-                    Write-Host "Something went wrong and the Recovery Key was not backed up to AD." -ForegroundColor Yellow
-                } else {
-                    Write-Host "Recovery Key for $HostName is backed up to AD."
-                }
                 Restart-Computer
                 if ($? -ne $true) {
                     Write-Host "$HostName did not restart. This computer must restart for encryption to begin!" -ForegroundColor Yellow
